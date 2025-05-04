@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Services Required and Lost Item Reports</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<style>
+  .error-message {
+    color: var(--error);
+    margin-top: 1rem;
+    text-align: center;
+    display: none;
+  }
+  
+  .error-shake {
+    animation: shake 0.5s;
+  }
+  
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+  }
+
+  .sidebar .nav-item:last-child {
+    margin-top: auto;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    color: #f44336;}
+</style>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <div class="logo">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+          <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+        </svg>
+        Admin Dashboard
+      </div>
+      
+      <div class="nav-item active" onclick="switchView('all')">All Reports</div>
+      <div class="nav-item" onclick="switchView('damaged')">Services Required Materials</div>
+      <div class="nav-item" onclick="switchView('lost')">Lost Items</div>
+      <div class="nav-item" onclick="switchView('analytics')">Data Analysis</div>
+      <div class="nav-item" onclick="refreshData()">Refresh Data</div>
+      <div class="nav-item" onclick="logout()">Logout</div>
+    </div>
+    
+    <div class="main">
+      <div class="header">
+        <h1 class="title">Services Required Materials and Lost Item Reports</h1>
+        <input type="text" class="search" placeholder="Search reports..." onkeyup="filterReports()">
+      </div>
+      
+      <div class="tab-container">
+        <div class="tab active" data-tab="all" onclick="switchView('all')">All Reports</div>
+        <div class="tab" data-tab="damaged" onclick="switchView('damaged')">Services Required Materials</div>
+        <div class="tab" data-tab="lost" onclick="switchView('lost')">Lost Items</div>
+        <div class="tab" data-tab="analytics" onclick="switchView('analytics')">Data Analysis</div>
+      </div>
+      
+      <!-- Reports Table -->
+      <div id="reports-view" class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Reporter</th>
+              <th>Item</th>
+              <th>Location</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="table-body">
+            <tr>
+              <td colspan="7">
+                <div class="loader">
+                  <div class="spinner"></div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Analytics View -->
+      <div id="analytics-view" class="hidden">
+        <div class="analytics-container">
+          <!-- Top Locations Card -->
+          <div class="analytics-card">
+            <h3>Most Common Locations</h3>
+            <ul class="location-list" id="top-locations">
+              <li>Loading locations...</li>
+            </ul>
+          </div>
+          
+          <!-- Reports by Type Chart -->
+          <div class="analytics-card">
+            <h3>Reports by Type</h3>
+            <div class="bar-chart-container">
+              <canvas id="reports-by-type-chart"></canvas>
+            </div>
+          </div>
+        </div>
+        
+        <div class="analytics-container">
+          <!-- Status Distribution Chart -->
+          <div class="analytics-card">
+            <h3>Status Distribution</h3>
+            <div class="bar-chart-container">
+              <canvas id="status-distribution-chart"></canvas>
+            </div>
+          </div>
+          
+          <!-- Reports by Branch Chart -->
+          <div class="analytics-card">
+            <h3>Reports by Branch</h3>
+            <div class="bar-chart-container">
+              <canvas id="reports-by-branch-chart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Edit Modal -->
+  <div class="modal" id="edit-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title">Edit Report</h2>
+        <span style="cursor:pointer" onclick="closeModal()">✕</span>
+      </div>
+      <div class="modal-body">
+        <form id="edit-form">
+          <input type="hidden" id="edit-id">
+          <input type="hidden" id="edit-index">
+          <input type="hidden" id="edit-report-type">
+          <input type="hidden" id="edit-row-index">
+          
+          <div class="form-group">
+            <label>Reporter Name</label>
+            <input type="text" class="form-control" id="edit-reporter-name" required>
+          </div>
+          
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="text" class="form-control" id="edit-reporter-phone">
+          </div>
+          
+          <div class="form-group">
+            <label>Branch</label>
+            <select class="form-control" id="edit-branch" required>
+              <option value="">Select Branch</option>
+              <option value="FET Campus">FET Campus</option>
+              <option value="PU Block">PU Block</option>
+              <option value="Aerospace Campus">Aerospace Campus</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label>Item Name</label>
+            <input type="text" class="form-control" id="edit-item-name" required>
+          </div>
+          
+          <div id="location-field" class="form-group">
+            <label id="location-label">Location</label>
+            <input type="text" class="form-control" id="edit-location">
+          </div>
+          
+          <div class="form-group">
+            <label>Status</label>
+            <select class="form-control" id="edit-status" required>
+              <option value="pending">Pending</option>
+              <option value="done">Done</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label>Notes</label>
+            <textarea class="form-control" id="edit-notes" rows="3"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" id="save-button" onclick="saveChanges()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">Changes saved successfully!</div>
+
+  <!-- Include Chart.js from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+  <script>
+    // Global variables
+    let allReports = [];
+    let currentView = 'all';
+    let charts = {};
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyiikADJd5LCVGM9_K17uyl778_dkClT_vJrX_Dldw_TnV5j5QnAaK7MokQGh9lb3Hu/exec';
+    
+    // Initial load
+    document.addEventListener('DOMContentLoaded', function() {
+      fetchReports();
+    });
+    
+    // Function to fetch reports from Google Sheets
+    function fetchReports() {
+      // Show loading state
+      document.getElementById('table-body').innerHTML = `
+        <tr>
+          <td colspan="7">
+            <div class="loader">
+              <div class="spinner"></div>
+            </div>
+          </td>
+        </tr>
+      `;
+      
+      // Fetch data from Google Sheets via Apps Script
+      fetch(SCRIPT_URL + '?action=getReports')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.status === 'success') {
+            allReports = data.reports;
+            
+            // Sort reports by date (newest first)
+            allReports.sort((a, b) => {
+              return new Date(b.timestamp) - new Date(a.timestamp);
+            });
+            
+            renderReports(currentView);
+            
+            // If on analytics view, update analytics
+            if (currentView === 'analytics') {
+              prepareAnalyticsData();
+            }
+          } else {
+            throw new Error(data.message || 'Failed to fetch reports');
+          }
+        })
+        .catch(error => {
+          console.error('Fetch error:', error);
+          document.getElementById('table-body').innerHTML = `
+            <tr>
+              <td colspan="7" style="text-align: center; padding: 2rem;">
+                Failed to connect to the server or parse data. Please try again later.
+              </td>
+            </tr>
+          `;
+        });
+    }
+    
+    // Render reports to the table
+    function renderReports(view) {
+      if (view === 'analytics') {
+        document.getElementById('reports-view').classList.add('hidden');
+        document.getElementById('analytics-view').classList.remove('hidden');
+        prepareAnalyticsData();
+        return;
+      } else {
+        document.getElementById('reports-view').classList.remove('hidden');
+        document.getElementById('analytics-view').classList.add('hidden');
+      }
+      
+      const tbody = document.getElementById('table-body');
+      let filteredReports = allReports;
+      
+      if (view === 'damaged') {
+        filteredReports = allReports.filter(report => report.reportType === "Damaged Material");
+      } else if (view === 'lost') {
+        filteredReports = allReports.filter(report => report.reportType === "Lost Item");
+      }
+      
+      if (filteredReports.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 2rem;">
+              No reports found.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+      
+      tbody.innerHTML = filteredReports.map((report, index) => {
+        const date = new Date(report.timestamp).toLocaleDateString();
+        const location = report.classroom || report.location || "-";
+        const statusClass = report.status === "done" ? "status-done" : "status-pending";
+        const statusText = report.status === "done" ? "Completed" : "Pending";
+        
+        // Find the original index in allReports
+        const originalIndex = allReports.findIndex(r => r.id === report.id);
+        
+        return `
+          <tr>
+            <td>${date}</td>
+            <td>${report.reportType === "Damaged Material" ? "Damaged" : "Lost"}</td>
+            <td>${report.reporterName || ''}</td>
+            <td>${report.itemName || ''}</td>
+            <td>${location}</td>
+            <td><span class="status ${statusClass}">${statusText}</span></td>
+            <td class="actions">
+              <button class="btn btn-sm btn-primary" onclick="editReport('${report.id}', ${originalIndex})">Edit</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+    
+    // Switch between views
+    function switchView(view) {
+      currentView = view;
+      
+      // Update nav highlight
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      
+      // Find and activate the correct nav item
+      const navItems = document.querySelectorAll('.nav-item');
+      if (view === 'all') navItems[0].classList.add('active');
+      else if (view === 'damaged') navItems[1].classList.add('active');
+      else if (view === 'lost') navItems[2].classList.add('active');
+      else if (view === 'analytics') navItems[3].classList.add('active');
+      
+      // Update tab highlight
+      document.querySelectorAll('.tab').forEach(item => {
+        item.classList.remove('active');
+      });
+      document.querySelector(`.tab[data-tab="${view}"]`).classList.add('active');
+      
+      renderReports(view);
+    }
+    
+    // Filter reports based on search
+    function filterReports() {
+      if (currentView === 'analytics') return;
+      
+      const searchTerm = document.querySelector('.search').value.toLowerCase().trim();
+      if (!searchTerm) {
+        renderReports(currentView);
+        return;
+      }
+      
+      const filteredReports = allReports.filter(report => {
+        // Safe checking to prevent errors on null or undefined values
+        return (
+          (report.reporterName && report.reporterName.toLowerCase().includes(searchTerm)) ||
+          (report.itemName && report.itemName.toLowerCase().includes(searchTerm)) ||
+          (report.classroom && report.classroom.toLowerCase().includes(searchTerm)) ||
+          (report.location && report.location.toLowerCase().includes(searchTerm)) ||
+          (report.branch && report.branch.toLowerCase().includes(searchTerm))
+        );
+      });
+      
+      const tbody = document.getElementById('table-body');
+      
+      if (filteredReports.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 2rem;">
+              No matching reports found.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+      
+      tbody.innerHTML = filteredReports.map((report) => {
+        const date = new Date(report.timestamp).toLocaleDateString();
+        const location = report.classroom || report.location || "-";
+        const statusClass = report.status === "done" ? "status-done" : "status-pending";
+        const statusText = report.status === "done" ? "Completed" : "Pending";
+        
+        // Find the original index in allReports
+        const originalIndex = allReports.findIndex(r => r.id === report.id);
+        
+        return `
+          <tr>
+            <td>${date}</td>
+            <td>${report.reportType === "Damaged Material" ? "Damaged" : "Lost"}</td>
+            <td>${report.reporterName || ''}</td>
+            <td>${report.itemName || ''}</td>
+            <td>${location}</td>
+            <td><span class="status ${statusClass}">${statusText}</span></td>
+            <td class="actions">
+              <button class="btn btn-sm btn-primary" onclick="editReport('${report.id}', ${originalIndex})">Edit</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+    function logout() {
+  localStorage.removeItem('isLoggedIn');
+  window.location.href = 'admin_login.html';
+}
+    // Analytics data preparation
+    function prepareAnalyticsData() {
+      if (!allReports || allReports.length === 0) return;
+      
+      // Calculate top locations
+      const locationCounts = {};
+      allReports.forEach(report => {
+        const location = report.classroom || report.location;
+        if (location) {
+          locationCounts[location] = (locationCounts[location] || 0) + 1;
+        }
+      });
+      
+      // Sort locations by count and get top 5
+      const topLocations = Object.entries(locationCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5);
+      
+      // Update top locations list
+      const locationsList = document.getElementById('top-locations');
+      if (topLocations.length === 0) {
+        locationsList.innerHTML = '<li>No location data available</li>';
+      } else {
+        locationsList.innerHTML = topLocations.map(([location, count]) => `
+          <li>
+            <span>${location}</span>
+            <span class="location-count">${count}</span>
+          </li>
+        `).join('');
+      }
+      
+      // Prepare data for charts
+      const reportsByType = {
+        'Damaged Material': allReports.filter(r => r.reportType === 'Damaged Material').length,
+        'Lost Item': allReports.filter(r => r.reportType === 'Lost Item').length
+      };
+      
+      const statusDistribution = {
+        'Pending': allReports.filter(r => r.status === 'pending').length,
+        'Completed': allReports.filter(r => r.status === 'done').length
+      };
+      
+      // Count reports by branch
+      const branchCounts = {};
+      allReports.forEach(report => {
+        const branch = report.branch || 'Unknown';
+        branchCounts[branch] = (branchCounts[branch] || 0) + 1;
+      });
+      
+      // Render charts
+      renderCharts(reportsByType, statusDistribution, branchCounts);
+    }
+    
+    // Render all charts
+    function renderCharts(reportsByType, statusDistribution, branchCounts) {      
+      // Destroy existing charts to prevent duplicates
+      if (charts.typeChart) charts.typeChart.destroy();
+      if (charts.statusChart) charts.statusChart.destroy();
+      if (charts.branchChart) charts.branchChart.destroy();
+      
+      // Common chart options
+      const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: {
+              color: 'rgba(255, 255, 255, 0.1)'
+            },
+            ticks: {
+              color: 'rgba(255, 255, 255, 0.7)'
+            }
+          },
+          x: {
+            grid: {
+              display: false
+            },
+            ticks: {
+              color: 'rgba(255, 255, 255, 0.7)'
+            }
+          }
+        }
+      };
+      
+      // Reports by Type Chart
+      const typeCtx = document.getElementById('reports-by-type-chart').getContext('2d');
+      charts.typeChart = new Chart(typeCtx, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(reportsByType),
+          datasets: [{
+            label: 'Number of Reports',
+            data: Object.values(reportsByType),
+            backgroundColor: ['rgba(26, 115, 232, 0.8)', 'rgba(244, 180, 0, 0.8)']
+          }]
+        },
+        options: chartOptions
+      });
+      
+      // Status Distribution Chart
+      const statusCtx = document.getElementById('status-distribution-chart').getContext('2d');
+      charts.statusChart = new Chart(statusCtx, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(statusDistribution),
+          datasets: [{
+            label: 'Number of Reports',
+            data: Object.values(statusDistribution),
+            backgroundColor: ['rgba(244, 180, 0, 0.8)', 'rgba(15, 157, 88, 0.8)']
+          }]
+        },
+        options: chartOptions
+      });
+      // Reports by Branch Chart
+      const branchCtx = document.getElementById('reports-by-branch-chart').getContext('2d');
+          charts.branchChart = new Chart(branchCtx, {
+            type: 'bar',
+            data: {
+              labels: Object.keys(branchCounts),
+              datasets: [{
+                label: 'Number of Reports',
+                data: Object.values(branchCounts),
+                backgroundColor: 'rgba(26, 115, 232, 0.8)'
+              }]
+            },
+            options: chartOptions
+          });
+        }
+    
+    // Edit report
+    function editReport(id, index) {
+      const report = allReports[index];
+      if (!report) {
+        showToast('Error: Report not found', true);
+        return;
+      }
+      
+      document.getElementById('edit-id').value = id;
+      document.getElementById('edit-index').value = index;
+      document.getElementById('edit-report-type').value = report.reportType;
+      document.getElementById('edit-reporter-name').value = report.reporterName || '';
+      document.getElementById('edit-reporter-phone').value = report.reporterPhone || '';
+      document.getElementById('edit-branch').value = report.branch || '';
+      document.getElementById('edit-item-name').value = report.itemName || '';
+      document.getElementById('edit-status').value = report.status || 'pending';
+      document.getElementById('edit-notes').value = report.additionalNotes || '';
+      
+      // Make sure rowIndex exists and is valid
+      if (report.rowIndex) {
+        document.getElementById('edit-row-index').value = report.rowIndex;
+      } else {
+        // Calculate a reasonable default if rowIndex doesn't exist
+        // This is just a fallback - the server should ideally provide the correct row index
+        document.getElementById('edit-row-index').value = index + 2; // +2 for header row and 1-based indexing
+      }
+      
+      // Set the correct location field label and value based on report type
+      const locationField = document.getElementById('location-field');
+      const locationLabel = document.getElementById('location-label');
+      const locationInput = document.getElementById('edit-location');
+      
+      if (report.reportType === "Damaged Material") {
+        locationLabel.textContent = "Classroom/Location";
+        locationInput.value = report.classroom || '';
+      } else {
+        locationLabel.textContent = "Last Known Location";
+        locationInput.value = report.location || '';
+      }
+      
+      // Update modal title
+      document.getElementById('modal-title').textContent = `Edit ${report.reportType}`;
+      
+      // Show modal
+      document.getElementById('edit-modal').classList.add('active');
+    }
+    
+    // Close modal
+    function closeModal() {
+      document.getElementById('edit-modal').classList.remove('active');
+    }
+    
+    // Save changes
+    function saveChanges() {
+      // Get form elements
+      const reporterNameElement = document.getElementById('edit-reporter-name');
+      const branchElement = document.getElementById('edit-branch');
+      const itemNameElement = document.getElementById('edit-item-name');
+      
+      // Validate required fields
+      if (!reporterNameElement.value.trim()) {
+        reporterNameElement.focus();
+        showToast('Reporter name is required', true);
+        return;
+      }
+      
+      if (!branchElement.value) {
+        branchElement.focus();
+        showToast('Branch is required', true);
+        return;
+      }
+      
+      if (!itemNameElement.value.trim()) {
+        itemNameElement.focus();
+        showToast('Item name is required', true);
+        return;
+      }
+      
+      const id = document.getElementById('edit-id').value;
+      const index = parseInt(document.getElementById('edit-index').value);
+      const reportType = document.getElementById('edit-report-type').value;
+      const reporterName = reporterNameElement.value.trim();
+      const reporterPhone = document.getElementById('edit-reporter-phone').value.trim();
+      const branch = branchElement.value;
+      const itemName = itemNameElement.value.trim();
+      const location = document.getElementById('edit-location').value.trim();
+      const status = document.getElementById('edit-status').value;
+      const notes = document.getElementById('edit-notes').value.trim();
+      const rowIndex = document.getElementById('edit-row-index').value;
+      
+      // Find the report
+      const report = allReports[index];
+      if (!report) {
+        showToast('Error: Report not found', true);
+        return;
+      }
+      
+      // Show loading indicator
+      const saveBtn = document.getElementById('save-button');
+      const originalBtnText = saveBtn.textContent;
+      saveBtn.textContent = 'Saving...';
+      saveBtn.disabled = true;
+      
+      // Prepare update data
+      const updateData = {
+        action: 'updateReport',
+        id: id,
+        rowIndex: rowIndex,
+        reportType: reportType,
+        reporterName: reporterName,
+        reporterPhone: reporterPhone,
+        branch: branch,
+        itemName: itemName,
+        status: status,
+        additionalNotes: notes
+      };
+      
+      // Add location field based on report type
+      if (reportType === "Damaged Material") {
+        updateData.classroom = location;
+      } else {
+        updateData.location = location;
+      }
+      
+      // Make API request
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain'  // Changed from application/json to text/plain
+        },
+        body: JSON.stringify(updateData)
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
+        }
+        return response.text();
+      })
+      .then(text => {
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (e) {
+          // Handle non-JSON response
+          if (text.includes('success')) {
+            data = { status: 'success' };
+          } else {
+            throw new Error('Invalid response from server: ' + text);
+          }
+        }
+        
+        if (data.status === 'success') {
+          // Update local data for immediate UI response
+          if (reportType === "Damaged Material") {
+            report.classroom = location;
+            report.location = '';
+          } else {
+            report.location = location;
+            report.classroom = '';
+          }
+          
+          report.reporterName = reporterName;
+          report.reporterPhone = reporterPhone;
+          report.branch = branch;
+          report.itemName = itemName;
+          report.status = status;
+          report.additionalNotes = notes;
+          report.rowIndex = rowIndex;
+          
+          renderReports(currentView);
+          closeModal();
+          showToast('Changes saved successfully!');
+          
+          // If currently in analytics view, update analytics
+          if (currentView === 'analytics') {
+            prepareAnalyticsData();
+          }
+        } else {
+          throw new Error(data.message || 'Unknown error occurred');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        showToast('Error saving changes: ' + error.message, true);
+      })
+      .finally(() => {
+        // Reset button state
+        saveBtn.textContent = originalBtnText;
+        saveBtn.disabled = false;
+      });
+    }
+    
+    // Show toast notification
+    function showToast(message, isError = false) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      
+      if (isError) {
+        toast.classList.add('error');
+      } else {
+        toast.classList.remove('error');
+      }
+      
+      toast.classList.add('show');
+      
+      // Clear any existing timeout to prevent issues
+      if (window.toastTimeout) {
+        clearTimeout(window.toastTimeout);
+      }
+      
+      window.toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+    
+    // Refresh data
+    function refreshData() {
+      fetchReports();
+      showToast('Refreshing data...');
+    }
+    
+
+     // Check if already logged in
+  document.addEventListener('DOMContentLoaded', function() {
+    // Check if already logged in
+    if (localStorage.getItem('isLoggedIn') === 'true') {
+      showDashboard();
+    } else {
+      showLogin();
+    }
+    
+    // Setup login form handler
+    const loginForm = document.getElementById('login-form');
+    const errorMessage = document.getElementById('error-message');
+    
+    loginForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      
+      // Check credentials (default: admin/admin)
+      if (username === 'admin' && password === 'admin') {
+        // Set login status in localStorage
+        localStorage.setItem('isLoggedIn', 'true');
+        
+        // Show dashboard
+        showDashboard();
+      } else {
+        // Show error message with shake animation
+        errorMessage.style.display = 'block';
+        loginForm.classList.add('error-shake');
+        
+        // Remove shake animation after it completes
+        setTimeout(() => {
+          loginForm.classList.remove('error-shake');
+        }, 500);
+      }
+    });
+  });
+  
+  // Show dashboard after successful login
+  function showDashboard() {
+    document.getElementById('login-container').style.display = 'none';
+    document.getElementById('dashboard-container').style.display = 'flex';
+    fetchReports();
+  }
+  
+  // Show login screen
+  function showLogin() {
+    document.getElementById('login-container').style.display = 'block';
+    document.getElementById('dashboard-container').style.display = 'none';
+  }
+  
+  // Logout function
+  function logout() {
+  localStorage.removeItem('isLoggedIn');
+  window.location.href = 'admin_login.html';
+}
+
+  
+  </script>
+</body>
+</html>

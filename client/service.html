@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+  <link rel="stylesheet" href="style.css">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Services Required Materials Report</title>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Services Required Materials Report</h1>
+      <p class="subheading">Report damaged or services required materials</p>
+    </header>
+    
+    <!-- Login Container -->
+    <div id="login-container" class="form-container">
+      <div id="login-error" class="message" style="background-color: rgba(217, 48, 37, 0.1); color: var(--error-color); border: 1px solid var(--error-color);">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        Invalid login credentials. Please try again.
+      </div>
+      
+      <h2 class="login-heading">Login to continue</h2>
+      
+      <form id="login-form" class="form-content">
+        <div class="form-group float-label">
+          <input type="email" id="email" name="email" placeholder=" " required>
+          <label for="email" class="required">Email</label>
+        </div>
+        
+        <div class="form-group float-label">
+          <input type="password" id="password" name="password" placeholder=" " required>
+          <label for="password" class="required">Password</label>
+        </div>
+        
+        <div class="remember-me">
+          <input type="checkbox" id="remember" name="remember" checked>
+          <label for="remember" style="display: inline; margin-bottom: 0">Remember me</label>
+        </div>
+        
+        <div class="forgot-password">
+          <a href="#">Forgot password?</a>
+        </div>
+        
+        <div class="button-container center-button">
+          <button type="submit" onclick="login(); return false;">
+            Login
+            <div class="spinner" id="login-spinner"></div>
+          </button>
+        </div>
+      </form>
+    </div>
+    
+    <!-- Services Form Container -->
+    <div id="form-container" class="form-container">
+      <div id="success-message" class="message">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+        Your report has been submitted successfully!
+      </div>
+      
+      <div id="error-message" class="message">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        There was an error submitting your report. Please try again.
+      </div>
+      
+      <!-- Services Required Materials Form -->
+      <form id="services-required" class="form-content">
+        <div class="row">
+          <div class="col-half">
+            <div class="form-group float-label">
+              <input type="text" id="reporter-name" name="reporter-name" placeholder=" " required>
+              <label for="reporter-name" class="required">Your Name</label>
+            </div>
+          </div>
+          <div class="col-half">
+            <div class="form-group float-label">
+              <input type="tel" id="reporter-phone" name="reporter-phone" placeholder=" " required>
+              <label for="reporter-phone" class="required">Your Phone Number</label>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="branch" class="required">Campus Branch</label>
+          <select id="branch" name="branch" required>
+            <option value="">Select campus branch</option>
+            <option value="FET Campus">FET Campus</option>
+            <option value="PU Block">PU Block</option>
+            <option value="Aerospace Campus">Aerospace Campus</option>
+          </select>
+        </div>
+        
+        <div class="row">
+          <div class="col-half">
+            <div class="form-group">
+              <label for="incident-date" class="required">Date of Damage</label>
+              <input type="date" id="incident-date" name="incident-date" required>
+            </div>
+          </div>
+          <div class="col-half">
+            <div class="form-group float-label">
+              <input type="text" id="classroom" name="classroom" placeholder=" " required>
+              <label for="classroom" class="required">Classroom/Location</label>
+            </div>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="col-half">
+            <div class="form-group">
+              <label for="item-type" class="required">Type of Item</label>
+              <select id="item-type" name="item-type" required>
+                <option value="">Select item type</option>
+                <option value="Furniture">Furniture</option>
+                <option value="Electronic">Electronic Equipment</option>
+                <option value="Lab Equipment">Lab Equipment</option>
+                <option value="Sports Equipment">Sports Equipment</option>
+                <option value="Book/Material">Book/Teaching Material</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-half">
+            <div class="form-group float-label">
+              <input type="text" id="item-name" name="item-name" placeholder=" " required>
+              <label for="item-name" class="required">Item Name/Description</label>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="damage-description" class="required">Description of Damage</label>
+          <textarea id="damage-description" name="description" rows="4" required></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="damage-severity" class="required">Severity of Damage</label>
+          <select id="damage-severity" name="severity" required>
+            <option value="">Select severity</option>
+            <option value="Minor">Minor - Still functional</option>
+            <option value="Moderate">Moderate - Partially functional</option>
+            <option value="Severe">Severe - Not functional</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="damage-cause">Cause of Damage (if known)</label>
+          <textarea id="damage-cause" name="cause" rows="3"></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="additional-notes">Additional Notes</label>
+          <textarea id="additional-notes" name="additional-notes" rows="3"></textarea>
+        </div>
+        
+        <div class="button-container">
+          <button type="submit" onclick="submitForm(); return false;">
+            Submit Report
+            <div class="spinner" id="spinner"></div>
+          </button>
+        </div>
+      </form>
+      
+      <div class="form-footer">
+        All fields marked with an asterisk (*) are required.
+        <p style="margin-top: 10px;">
+          <a href="#" onclick="logout(); return false;" style="color: var(--primary-color); text-decoration: none;">Logout</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Script URL for the Google Apps Script web app
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyiikADJd5LCVGM9_K17uyl778_dkClT_vJrX_Dldw_TnV5j5QnAaK7MokQGh9lb3Hu/exec';
+    
+    // Handle login
+    function login() {
+      document.getElementById("login-error").style.display = "none";
+      document.getElementById("login-spinner").style.display = "inline-block";
+      
+      // Get email and password
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      
+      // Create data to send to Google Apps Script
+      const loginData = {
+        action: "login",
+        email: email,
+        password: password
+      };
+      
+      // Make the API call to Google Apps Script
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(loginData),
+      })
+      .then(response => {
+         setTimeout(function() {
+          checkLoginStatus(email);
+        }, 2000);
+      })
+      .catch(error => {
+        document.getElementById("login-spinner").style.display = "none";
+        document.getElementById("login-error").style.display = "block";
+        console.error('Login Error:', error);
+      });
+    }
+    
+    // Check login status via localStorage (workaround for no-cors limitation)
+    function checkLoginStatus(email) {
+      // In a real application, you might want to implement a more secure check
+      // But for this example, we'll simulate a successful login for valid emails
+      const validDomains = ["jainuniversity.ac.in"];
+      const domain = email.split('@')[1];
+      
+      if (validDomains.includes(domain)) {
+        // Make a second request to get user details
+        fetch(`${SCRIPT_URL}?action=getUserDetails&email=${email}`, {
+          method: 'GET',
+          mode: 'no-cors'
+        })
+        .then(() => {
+          // We can't actually read the response due to CORS,
+          // so we'll simulate success if the email domain is valid
+          // Show the form container and hide login
+          document.getElementById("login-container").style.display = "none";
+          document.getElementById("form-container").style.display = "block";
+          
+          // Store user email and login status
+          localStorage.setItem("loggedIn", "true");
+          localStorage.setItem("userEmail", email);
+          
+          // Get user name from email (in reality this would come from the API)
+          const userName = extractNameFromEmail(email);
+          localStorage.setItem("userName", userName);
+          
+          // Update UI with user name
+          document.getElementById("reporter-name").value = userName;
+          
+          // Hide spinner
+          document.getElementById("login-spinner").style.display = "none";
+        })
+        .catch(error => {
+          document.getElementById("login-spinner").style.display = "none";
+          document.getElementById("login-error").style.display = "block";
+        });
+      } else {
+        document.getElementById("login-spinner").style.display = "none";
+        document.getElementById("login-error").style.display = "block";
+      }
+    }
+    
+    // Extract a name from email (for demonstration)
+    function extractNameFromEmail(email) {
+      // Remove domain
+      let name = email.split('@')[0];
+      
+      // Remove numbers and special characters
+      name = name.replace(/[^a-zA-Z]/g, ' ');
+      
+      // Capitalize first letter of each word
+      name = name.replace(/\b\w/g, l => l.toUpperCase());
+      
+      // If name is empty, use a default
+      if (name.trim() === '') {
+        return "User";
+      }
+      
+      return name.trim();
+    }
+    
+    // Handle logout
+    function logout() {
+      // Clear local storage
+      localStorage.removeItem("loggedIn");
+      localStorage.removeItem("userEmail");
+      localStorage.removeItem("userName");
+      
+      // Reset the login form
+      document.getElementById("email").value = "";
+      document.getElementById("password").value = "";
+      
+      // Show login container and hide form
+      document.getElementById("login-container").style.display = "block";
+      document.getElementById("form-container").style.display = "none";
+      
+      // Log logout event to Google Apps Script
+      const logoutData = {
+        action: "logout",
+        email: localStorage.getItem("userEmail") || "unknown"
+      };
+      
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(logoutData),
+      }).catch(error => console.error('Logout error:', error));
+    }
+    
+    // Check if user is logged in
+    document.addEventListener('DOMContentLoaded', function() {
+      if (localStorage.getItem("loggedIn") === "true") {
+        document.getElementById("login-container").style.display = "none";
+        document.getElementById("form-container").style.display = "block";
+        
+        // Restore user name if available
+        const userName = localStorage.getItem("userName");
+        if (userName) {
+          document.getElementById("reporter-name").value = userName;
+        }
+      }
+    });
+    
+    // Function to submit the form
+    function submitForm() {
+      // Hide previous messages
+      document.getElementById("success-message").style.display = "none";
+      document.getElementById("error-message").style.display = "none";
+      
+      // Show spinner
+      document.getElementById("spinner").style.display = "inline-block";
+      
+      // Get form data
+      const form = document.getElementById("services-required");
+      
+      // Basic form validation
+      let valid = true;
+      const requiredFields = form.querySelectorAll('[required]');
+      
+      requiredFields.forEach(field => {
+        if (!field.value) {
+          field.style.borderColor = "var(--error-color)";
+          valid = false;
+        } else {
+          field.style.borderColor = "";
+        }
+      });
+      
+      if (!valid) {
+        document.getElementById("error-message").textContent = "Please fill in all required fields.";
+        document.getElementById("error-message").style.display = "block";
+        document.getElementById("spinner").style.display = "none";
+        return;
+      }
+      
+      // Prepare data for submission
+      const timestamp = new Date().toISOString();
+      const userEmail = localStorage.getItem("userEmail") || "unknown";
+      
+      // Create an object with all form data
+      const data = {
+        action: "submitReport",
+        timestamp: timestamp,
+        reportType: "Services Required Material",
+        reporterName: form.querySelector('[name="reporter-name"]').value,
+        reporterPhone: form.querySelector('[name="reporter-phone"]').value,
+        reporterEmail: userEmail,
+        branch: form.querySelector('[name="branch"]').value,
+        incidentDate: form.querySelector('[name="incident-date"]').value,
+        classroom: form.querySelector('[name="classroom"]').value,
+        itemType: form.querySelector('[name="item-type"]').value,
+        itemName: form.querySelector('[name="item-name"]').value,
+        damageDescription: form.querySelector('[name="description"]').value,
+        damageSeverity: form.querySelector('[name="severity"]').value,
+        damageCause: form.querySelector('[name="cause"]').value,
+        additionalNotes: form.querySelector('[name="additional-notes"]').value
+      };
+      
+      // Send data to Google Sheets via Apps Script
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+      .then(response => {
+        // Hide spinner
+        document.getElementById("spinner").style.display = "none";
+        // Show success message
+        document.getElementById("success-message").style.display = "block";
+        // Reset form except for reporter name
+        const reporterName = form.querySelector('[name="reporter-name"]').value;
+        form.reset();
+        form.querySelector('[name="reporter-name"]').value = reporterName;
+      })
+      .catch(error => {
+        // Hide spinner
+        document.getElementById("spinner").style.display = "none";
+        // Show error message
+        document.getElementById("error-message").textContent = "Error submitting form. Please try again.";
+        document.getElementById("error-message").style.display = "block";
+        console.error('Error:', error);
+      });
+    }
+    
+    // Add event listeners for floating labels
+    document.addEventListener('DOMContentLoaded', function() {
+      const inputFields = document.querySelectorAll('input[type="text"], input[type="tel"], input[type="email"], input[type="password"], textarea');
+      
+      inputFields.forEach(field => {
+        // Check initial state
+        if (field.value !== '') {
+          const label = field.parentNode.querySelector('label');
+          if (label) {
+            label.classList.add('active');
+          }
+          
+          // For prefilled inputs, trigger the float label effect
+          if (field.classList.contains('float-label')) {
+            field.dispatchEvent(new Event('input'));
+          }
+        }
+        
+        // Add focus event
+        field.addEventListener('focus', function() {
+          const label = this.parentNode.querySelector('label');
+          if (label) {
+            label.classList.add('active');
+          }
+        });
+        
+        // Add blur event
+        field.addEventListener('blur', function() {
+          if (this.value === '') {
+            const label = this.parentNode.querySelector('label');
+            if (label) {
+              label.classList.remove('active');
+            }
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

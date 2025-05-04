@@ -1,0 +1,2191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hostel Outpass Management System</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --dark: #34495e;
+            --light: #ecf0f1;
+            --white: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 30px;
+            background-color: var(--white);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        .login-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--dark);
+        }
+        
+        .login-form {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--dark);
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-success {
+            background-color: var(--secondary);
+            color: var(--white);
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+            color: var(--white);
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        header {
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            padding: 15px 0;
+            margin-bottom: 30px;
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 20px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .main-content {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background-color: var(--white);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            padding: 20px;
+        }
+        
+        .sidebar-nav {
+            list-style: none;
+        }
+        
+        .sidebar-nav li {
+            margin-bottom: 10px;
+        }
+        
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--dark);
+            padding: 10px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-nav a:hover, .sidebar-nav a.active {
+            background-color: #eef2f7;
+            color: var(--primary);
+        }
+        
+        .sidebar-nav i {
+            margin-right: 10px;
+        }
+        
+        .content {
+            flex: 1;
+        }
+        
+        .card {
+            background-color: var(--white);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background-color: var(--white);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .stat-card i {
+            font-size: 40px;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .stat-card h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .stat-card p {
+            color: #777;
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        table th, table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        table th {
+            background-color: #f9f9f9;
+            color: var(--dark);
+            font-weight: 600;
+        }
+        
+        table tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-pending {
+            background-color: #ffeaa7;
+            color: #b7791f;
+        }
+        
+        .badge-approved {
+            background-color: #c6f6d5;
+            color: #2f855a;
+        }
+        
+        .badge-rejected {
+            background-color: #fed7d7;
+            color: #c53030;
+        }
+        
+        .chart-container {
+            height: 300px;
+            margin-top: 20px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-col {
+            flex: 1;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            overflow: auto;
+        }
+        
+        .modal-content {
+            background-color: var(--white);
+            margin: 100px auto;
+            width: 60%;
+            max-width: 600px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            padding: 30px;
+        }
+        
+        .close {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: var(--danger);
+        }
+        
+        .qr-code {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .qr-code img {
+            width: 200px;
+            height: 200px;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .pagination a {
+            padding: 8px 12px;
+            margin: 0 5px;
+            border-radius: 5px;
+            background-color: var(--white);
+            color: var(--dark);
+            text-decoration: none;
+            box-shadow: var(--shadow);
+        }
+        
+        .pagination a.active {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+        
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--white);
+            color: var(--dark);
+            padding: 15px 20px;
+            border-radius: 5px;
+            box-shadow: var(--shadow);
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            animation: slideIn 0.3s, fadeOut 0.5s 2.5s forwards;
+        }
+        
+        .toast.success {
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .toast.error {
+            border-left: 4px solid var(--danger);
+        }
+        
+        .toast.warning {
+            border-left: 4px solid var(--warning);
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                margin-bottom: 30px;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .modal-content {
+                width: 90%;
+            }
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="login-page">
+        <div class="login-container">
+            <h2 class="login-title">Hostel Outpass Management System</h2>
+            <form class="login-form" id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control" id="username" placeholder="Enter your username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                </div>
+                <div class="form-group">
+                    <label for="userType">User Type</label>
+                    <select class="form-control" id="userType">
+                        <option value="student">Student</option>
+                        <option value="admin">Admin (HOD/Warden/Director)</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="admin-dashboard" style="display: none;">
+        <header>
+            <div class="container">
+                <div class="navbar">
+                    <div class="logo">HOMS Admin</div>
+                    <ul class="nav-links">
+                        <li><a href="#" onclick="showSection('admin-dashboard-section')">Dashboard</a></li>
+                        <li><a href="#" onclick="showSection('admin-outpass-requests')">Outpass Requests</a></li>
+                        <li><a href="#" onclick="showSection('admin-analytics')">Analytics</a></li>
+                        <li><a href="#" onclick="showSection('admin-settings')">Settings</a></li>
+                    </ul>
+                    <div class="user-info">
+                        <img src="/api/placeholder/40/40" alt="Admin">
+                        <span id="admin-name">Admin Name</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="container">
+            <div class="main-content">
+                <div class="sidebar">
+                    <ul class="sidebar-nav">
+                        <li><a href="#" class="active" onclick="showSection('admin-dashboard-section')"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                        <li><a href="#" onclick="showSection('admin-outpass-requests')"><i class="fas fa-clipboard-list"></i> Outpass Requests</a></li>
+                        <li><a href="#" onclick="showSection('admin-analytics')"><i class="fas fa-chart-line"></i> Analytics</a></li>
+                        <li><a href="#" onclick="showSection('admin-settings')"><i class="fas fa-cog"></i> Settings</a></li>
+                        <li><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    </ul>
+                </div>
+                
+                <div class="content">
+                    <!-- Admin Dashboard Section -->
+                    <div id="admin-dashboard-section">
+                        <h2>Dashboard Overview</h2>
+                        <div class="dashboard-stats">
+                            <div class="stat-card">
+                                <i class="fas fa-clipboard-list"></i>
+                                <h3>157</h3>
+                                <p>Total Requests</p>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-clock"></i>
+                                <h3>28</h3>
+                                <p>Pending Requests</p>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-check-circle"></i>
+                                <h3>112</h3>
+                                <p>Approved Requests</p>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-times-circle"></i>
+                                <h3>17</h3>
+                                <p>Rejected Requests</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Recent Outpass Requests</h3>
+                                <a href="#" onclick="showSection('admin-outpass-requests')" class="btn btn-primary">View All</a>
+                            </div>
+                            <div class="table-responsive">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Student ID</th>
+                                            <th>Student Name</th>
+                                            <th>Destination</th>
+                                            <th>From Date</th>
+                                            <th>To Date</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>S12345</td>
+                                            <td>John Smith</td>
+                                            <td>Home</td>
+                                            <td>24-04-2025</td>
+                                            <td>26-04-2025</td>
+                                            <td><span class="badge badge-pending">Pending</span></td>
+                                            <td>
+                                                <div class="actions">
+                                                    <button class="btn btn-primary" onclick="viewOutpassDetails('S12345')">View</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>S12346</td>
+                                            <td>Mary Johnson</td>
+                                            <td>Medical Emergency</td>
+                                            <td>23-04-2025</td>
+                                            <td>25-04-2025</td>
+                                            <td><span class="badge badge-approved">Approved</span></td>
+                                            <td>
+                                                <div class="actions">
+                                                    <button class="btn btn-primary" onclick="viewOutpassDetails('S12346')">View</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>S12347</td>
+                                            <td>Robert Williams</td>
+                                            <td>Family Function</td>
+                                            <td>25-04-2025</td>
+                                            <td>28-04-2025</td>
+                                            <td><span class="badge badge-pending">Pending</span></td>
+                                            <td>
+                                                <div class="actions">
+                                                    <button class="btn btn-primary" onclick="viewOutpassDetails('S12347')">View</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>S12348</td>
+                                            <td>Sarah Davis</td>
+                                            <td>Internship Interview</td>
+                                            <td>24-04-2025</td>
+                                            <td>24-04-2025</td>
+                                            <td><span class="badge badge-rejected">Rejected</span></td>
+                                            <td>
+                                                <div class="actions">
+                                                    <button class="btn btn-primary" onclick="viewOutpassDetails('S12348')">View</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Outpass Trends</h3>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="outpassTrendsChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Admin Outpass Requests Section -->
+                    <div id="admin-outpass-requests" style="display: none;">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">All Outpass Requests</h3>
+                                <div>
+                                    <select class="form-control" id="requestFilter">
+                                        <option value="all">All Requests</option>
+                                        <option value="pending">Pending</option>
+                                        <option value="approved">Approved</option>
+                                        <option value="rejected">Rejected</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Student ID</th>
+                                            <th>Student Name</th>
+                                            <th>Destination</th>
+                                            <th>Purpose</th>
+                                            <th>From Date</th>
+                                            <th>To Date</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>S12345</td>
+                                            <td>John Smith</td>
+                                            <td>Home</td>
+                                            <td>Weekend visit</td>
+                                            <td>24-04-2025</td>
+                                            <td>26-04-2025</td>
+                                            <td><span class="badge badge-pending">Pending</span></td>
+                                            <td>
+                                                <div class="actions">
+                                                    <button class="btn btn-primary" onclick="viewOutpassDetails('S12345')">View</button>
+                                                    <button class="btn btn-success" onclick="approveOutpass('S12345')">Approve</button>
+                                                    <button class="btn btn-danger" onclick="rejectOutpass('S12345')">Reject</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>S12346</td>
+                                            <td>Mary Johnson</td>
+                                            <td>Medical Emergency</td>
+                                            <td>Doctor's appointment</td>
+                                            <td>23-04-2025</td>
+                                            <td>25-04-2025</td>
+                                            <td><span class="badge badge-approved">Approved</span></td>
+                                            <td>
+                                                <div class="actions">
+                                                    <button class="btn btn-primary" onclick="viewOutpassDetails('S12346')">View</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>S12347</td>
+                                            <td>Robert Williams</td>
+                                            <td>Family Function</td>
+                                            <td>Sister's wedding</td>
+                                            <td>25-04-2025</td>
+                                            <td>28-04-2025</td>
+                                            <td><span class="badge badge-pending">Pending</span></td>
+                                            <td>
+                                                <div class="actions">
+                                                    <button class="btn btn-primary" onclick="viewOutpassDetails('S12347')">View</button>
+                                                    <button class="btn btn-success" onclick="approveOutpass('S12347')">Approve</button>
+                                                    <button class="btn btn-danger" onclick="rejectOutpass('S12347')">Reject</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>S12348</td>
+                                            <td>Sarah Davis</td>
+                                            <td>Internship Interview</td>
+                                            <td>Job interview at TechCorp</td>
+                                            <td>24-04-2025</td>
+                                            <td>24-04-2025</td>
+                                            <td><span class="badge badge-rejected">Rejected</span></td>
+                                            <td>
+                                                <div class="actions">
+                                                    <button class="btn btn-primary" onclick="viewOutpassDetails('S12348')">View</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>S12349</td>
+                                            <td>Michael Brown</td>
+                                            <td>Home</td>
+                                            <td>Family emergency</td>
+                                            <td>22-04-2025</td>
+                                            <td>29-04-2025</td>
+                                            <td><span class="badge badge-approved">Approved</span></td>
+                                            <td>
+                                                <div class="actions">
+                                                    <button class="btn btn-primary" onclick="viewOutpassDetails('S12349')">View</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>S12350</td>
+                                            <td>Jessica Wilson</td>
+                                            <td>Conference</td>
+                                            <td>IEEE Tech Conference</td>
+                                            <td>27-04-2025</td>
+                                            <td>30-04-2025</td>
+                                            <td><span class="badge badge-pending">Pending</span></td>
+                                            <td>
+                                                <div class="actions">
+                                                    <button class="btn btn-primary" onclick="viewOutpassDetails('S12350')">View</button>
+                                                    <button class="btn btn-success" onclick="approveOutpass('S12350')">Approve</button>
+                                                    <button class="btn btn-danger" onclick="rejectOutpass('S12350')">Reject</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="pagination">
+                                <a href="#" class="active">1</a>
+                                <a href="#">2</a>
+                                <a href="#">3</a>
+                                <a href="#">4</a>
+                                <a href="#">Next</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Admin Analytics Section -->
+                    <div id="admin-analytics" style="display: none;">
+                        <h2>Analytics Dashboard</h2>
+                        <div class="dashboard-stats">
+                            <div class="stat-card">
+                                <i class="fas fa-users"></i>
+                                <h3>876</h3>
+                                <p>Total Students</p>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-clipboard-list"></i>
+                                <h3>2,435</h3>
+                                <p>Total Outpasses (YTD)</p>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-percentage"></i>
+                                <h3>84%</h3>
+                                <p>Approval Rate</p>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-clock"></i>
+                                <h3>6.2h</h3>
+                                <p>Avg. Response Time</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Monthly Outpass Requests</h3>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="monthlyRequestsChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Purpose Distribution</h3>
+                                    </div>
+                                    <div class="chart-container">
+                                        <canvas id="purposeDistributionChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Approval Status</h3>
+                                    </div>
+                                    <div class="chart-container">
+                                        <canvas id="approvalStatusChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Outpass Duration Analysis</h3>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="durationAnalysisChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Top Destinations</h3>
+                            </div>
+                            <div class="table-responsive">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Destination</th>
+                                            <th>Count</th>
+                                            <th>Percentage</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Home</td>
+                                            <td>986</td>
+                                            <td>40.5%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Medical</td>
+                                            <td>352</td>
+                                            <td>14.5%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Family Function</td>
+                                            <td>287</td>
+                                            <td>11.8%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Internship/Job Interview</td>
+                                            <td>234</td>
+                                            <td>9.6%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Conference/Workshop</td>
+                                            <td>193</td>
+                                            <td>7.9%</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Admin Settings Section (Continued) -->
+                    <div id="admin-settings" style="display: none;">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">System Settings</h3>
+                            </div>
+                            <div class="card-body">
+                                <form id="settingsForm">
+                                    <div class="form-group">
+                                        <label for="instituteName">Institution Name</label>
+                                        <input type="text" class="form-control" id="instituteName" value="XYZ Engineering College">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="hostelName">Hostel Name</label>
+                                        <input type="text" class="form-control" id="hostelName" value="Boys Hostel Block A">
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-col">
+                                            <div class="form-group">
+                                                <label for="academicYear">Current Academic Year</label>
+                                                <input type="text" class="form-control" id="academicYear" value="2024-2025">
+                                            </div>
+                                        </div>
+                                        <div class="form-col">
+                                            <div class="form-group">
+                                                <label for="semester">Current Semester</label>
+                                                <select class="form-control" id="semester">
+                                                    <option>Spring</option>
+                                                    <option selected>Fall</option>
+                                                    <option>Summer</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <h4 class="mt-4">Approval Workflow Settings</h4>
+                                    <div class="form-group">
+                                        <label>Required Approvals</label>
+                                        <div>
+                                            <input type="checkbox" id="hodApproval" checked>
+                                            <label for="hodApproval">HOD Approval</label>
+                                        </div>
+                                        <div>
+                                            <input type="checkbox" id="directorApproval" checked>
+                                            <label for="directorApproval">Director Approval</label>
+                                        </div>
+                                        <div>
+                                            <input type="checkbox" id="wardenApproval" checked>
+                                            <label for="wardenApproval">Warden Approval</label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label>Parent Verification</label>
+                                        <div>
+                                            <input type="checkbox" id="parentVerification" checked>
+                                            <label for="parentVerification">Enable Parent Verification</label>
+                                        </div>
+                                        <div>
+                                            <input type="radio" name="parentVerificationType" id="parentSMS" checked>
+                                            <label for="parentSMS">SMS OTP</label>
+                                        </div>
+                                        <div>
+                                            <input type="radio" name="parentVerificationType" id="parentEmail">
+                                            <label for="parentEmail">Email Verification</label>
+                                        </div>
+                                    </div>
+                                    
+                                    <h4 class="mt-4">Notification Settings</h4>
+                                    <div class="form-group">
+                                        <div>
+                                            <input type="checkbox" id="emailNotifications" checked>
+                                            <label for="emailNotifications">Email Notifications</label>
+                                        </div>
+                                        <div>
+                                            <input type="checkbox" id="smsNotifications" checked>
+                                            <label for="smsNotifications">SMS Notifications</label>
+                                        </div>
+                                        <div>
+                                            <input type="checkbox" id="appNotifications" checked>
+                                            <label for="appNotifications">In-App Notifications</label>
+                                        </div>
+                                    </div>
+                                    
+                                    <h4 class="mt-4">Security Settings</h4>
+                                    <div class="form-group">
+                                        <div>
+                                            <input type="checkbox" id="qrCodeExpiry" checked>
+                                            <label for="qrCodeExpiry">Enable QR Code Expiry</label>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="qrExpirytime">QR Code Validity (hours)</label>
+                                            <input type="number" class="form-control" id="qrExpirytime" value="48">
+                                        </div>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-primary">Save Settings</button>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">User Management</h3>
+                                <button class="btn btn-primary" onclick="showAddUserModal()">Add New User</button>
+                            </div>
+                            <div class="table-responsive">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Role</th>
+                                            <th>Department</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>A001</td>
+                                            <td>Dr. James Wilson</td>
+                                            <td>jwilson@xyz.edu</td>
+                                            <td>HOD</td>
+                                            <td>Computer Science</td>
+                                            <td><span class="badge badge-approved">Active</span></td>
+                                            <td>
+                                                <div class="actions">
+                                                    <button class="btn btn-primary">Edit</button>
+                                                    <button class="btn btn-danger">Deactivate</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>A002</td>
+                                            <td>Dr. Emily Johnson</td>
+                                            <td>ejohnson@xyz.edu</td>
+                                            <td>Director</td>
+                                            <td>Administration</td>
+                                            <td><span class="badge badge-approved">Active</span></td>
+                                            <td>
+                                                <div class="actions">
+                                                    <button class="btn btn-primary">Edit</button>
+                                                    <button class="btn btn-danger">Deactivate</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>A003</td>
+                                            <td>Mr. Robert Brown</td>
+                                            <td>rbrown@xyz.edu</td>
+                                            <td>Warden</td>
+                                            <td>Boys Hostel</td>
+                                            <td><span class="badge badge-approved">Active</span></td>
+                                            <td>
+                                                <div class="actions">
+                                                    <button class="btn btn-primary">Edit</button>
+                                                    <button class="btn btn-danger">Deactivate</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>A004</td>
+                                            <td>Ms. Sarah Davis</td>
+                                            <td>sdavis@xyz.edu</td>
+                                            <td>Warden</td>
+                                            <td>Girls Hostel</td>
+                                            <td><span class="badge badge-approved">Active</span></td>
+                                            <td>
+                                                <div class="actions">
+                                                    <button class="btn btn-primary">Edit</button>
+                                                    <button class="btn btn-danger">Deactivate</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Dashboard -->
+    <div id="student-dashboard" style="display: none;">
+        <header>
+            <div class="container">
+                <div class="navbar">
+                    <div class="logo">HOMS Student</div>
+                    <ul class="nav-links">
+                        <li><a href="#" onclick="showSection('student-dashboard-section')">Dashboard</a></li>
+                        <li><a href="#" onclick="showSection('student-my-requests')">My Requests</a></li>
+                        <li><a href="#" onclick="showSection('student-new-request')">New Request</a></li>
+                        <li><a href="#" onclick="showSection('student-profile')">Profile</a></li>
+                    </ul>
+                    <div class="user-info">
+                        <img src="/api/placeholder/40/40" alt="Student">
+                        <span id="student-name">Student Name</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="container">
+            <div class="main-content">
+                <div class="sidebar">
+                    <ul class="sidebar-nav">
+                        <li><a href="#" class="active" onclick="showSection('student-dashboard-section')"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                        <li><a href="#" onclick="showSection('student-my-requests')"><i class="fas fa-clipboard-list"></i> My Requests</a></li>
+                        <li><a href="#" onclick="showSection('student-new-request')"><i class="fas fa-plus-circle"></i> New Request</a></li>
+                        <li><a href="#" onclick="showSection('student-profile')"><i class="fas fa-user"></i> Profile</a></li>
+                        <li><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    </ul>
+                </div>
+                
+                <div class="content">
+                    <!-- Student Dashboard Section -->
+                    <div id="student-dashboard-section">
+                        <h2>Welcome, <span id="student-dashboard-name">John Smith</span>!</h2>
+                        
+                        <div class="dashboard-stats">
+                            <div class="stat-card">
+                                <i class="fas fa-clipboard-list"></i>
+                                <h3>12</h3>
+                                <p>Total Requests</p>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-clock"></i>
+                                <h3>1</h3>
+                                <p>Pending Requests</p>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-check-circle"></i>
+                                <h3>10</h3>
+                                <p>Approved Requests</p>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-times-circle"></i>
+                                <h3>1</h3>
+                                <p>Rejected Requests</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Active Outpass</h3>
+                            </div>
+                            <div class="card-body" id="activeOutpassCard">
+                                <div class="qr-code">
+                                    <img src="/api/placeholder/200/200" alt="QR Code">
+                                    <p>Scan this QR code at the hostel gate</p>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-col">
+                                        <p><strong>Destination:</strong> Home</p>
+                                        <p><strong>Purpose:</strong> Weekend visit</p>
+                                        <p><strong>From:</strong> 24-04-2025</p>
+                                        <p><strong>To:</strong> 26-04-2025</p>
+                                    </div>
+                                    <div class="form-col">
+                                        <p><strong>Outpass ID:</strong> OP-20250424-001</p>
+                                        <p><strong>Status:</strong> <span class="badge badge-approved">Approved</span></p>
+                                        <p><strong>Approved by:</strong> Dr. James Wilson (HOD), Dr. Emily Johnson (Director), Mr. Robert Brown (Warden)</p>
+                                        <p><strong>Validity:</strong> Valid until 26-04-2025 10:00 PM</p>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary" onclick="downloadOutpass()">Download Outpass</button>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Recent Requests</h3>
+                                <a href="#" onclick="showSection('student-my-requests')" class="btn btn-primary">View All</a>
+                            </div>
+                            <div class="table-responsive">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Outpass ID</th>
+                                            <th>Destination</th>
+                                            <th>From Date</th>
+                                            <th>To Date</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>OP-20250424-001</td>
+                                            <td>Home</td>
+                                            <td>24-04-2025</td>
+                                            <td>26-04-2025</td>
+                                            <td><span class="badge badge-approved">Approved</span></td>
+                                            <td>
+                                                <div class="actions">
+                                                    <button class="btn btn-primary" onclick="viewStudentOutpassDetails('OP-20250424-001')">View</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>OP-20250410-002</td>
+                                            <td>Medical Checkup</td>
+                                            <td>10-04-2025</td>
+                                            <td>10-04-2025</td>
+                                            <td><span class="badge badge-approved">Approved</span></td>
+                                            <td>
+                                                <div class="actions">
+                                                    <button class="btn btn-primary" onclick="viewStudentOutpassDetails('OP-20250410-002')">View</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>OP-20250328-003</td>
+                                            <td>Family Function</td>
+                                            <td>28-03-2025</td>
+                                            <td>30-03-2025</td>
+                                            <td><span class="badge badge-rejected">Rejected</span></td>
+                                            <td>
+                                                <div class="actions">
+                                                    <button class="btn btn-primary" onclick="viewStudentOutpassDetails('OP-20250328-003')">View</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Student My Requests Section -->
+                    <div id="student-my-requests" style="display: none;">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">My Outpass Requests</h3>
+                                <div>
+                                    <select class="form-control" id="studentRequestFilter">
+                                        <option value="all">All Requests</option>
+                                        <option value="pending">Pending</option>
+                                        <option value="approved">Approved</option>
+                                        <option value="rejected">Rejected</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Outpass ID</th>
+                                            <th>Destination</th>
+                                            <th>Purpose</th>
+                                            <th>From Date</th>
+                                            <th>To Date</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>OP-20250424-001</td>
+                                            <td>Home</td>
+                                            <td>Weekend visit</td>
+                                            <td>24-04-2025</td>
+                                            <td>26-04-2025</td>
+                                            <td><span class="badge badge-approved">Approved</span></td>
+                                            <td>
+                                                <div class="actions">
+                                                    <button class="btn btn-primary" onclick="viewStudentOutpassDetails('OP-20250424-001')">View</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>OP-20250410-002</td>
+                                            <td>Medical Checkup</td>
+                                            <td>Regular health checkup</td>
+                                            <td>10-04-2025</td>
+                                            <td>10-04-2025</td>
+                                            <td><span class="badge badge-approved">Approved</span></td>
+                                            <td>
+                                                <div class="actions">
+                                                    <button class="btn btn-primary" onclick="viewStudentOutpassDetails('OP-20250410-002')">View</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>OP-20250328-003</td>
+                                            <td>Family Function</td>
+                                            <td>Cousin's wedding</td>
+                                            <td>28-03-2025</td>
+                                            <td>30-03-2025</td>
+                                            <td><span class="badge badge-rejected">Rejected</span></td>
+                                            <td>
+                                                <div class="actions">
+                                                    <button class="btn btn-primary" onclick="viewStudentOutpassDetails('OP-20250328-003')">View</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>OP-20250315-004</td>
+                                            <td>Internship Interview</td>
+                                            <td>Interview at TechCorp</td>
+                                            <td>15-03-2025</td>
+                                            <td>15-03-2025</td>
+                                            <td><span class="badge badge-approved">Approved</span></td>
+                                            <td>
+                                                <div class="actions">
+                                                    <button class="btn btn-primary" onclick="viewStudentOutpassDetails('OP-20250315-004')">View</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>OP-20250302-005</td>
+                                            <td>Competition</td>
+                                            <td>Robotics competition</td>
+                                            <td>02-03-2025</td>
+                                            <td>04-03-2025</td>
+                                            <td><span class="badge badge-approved">Approved</span></td>
+                                            <td>
+                                                <div class="actions">
+                                                    <button class="btn btn-primary" onclick="viewStudentOutpassDetails('OP-20250302-005')">View</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>OP-20250228-006</td>
+                                            <td>Conference</td>
+                                            <td>IEEE Tech Conference</td>
+                                            <td>28-02-2025</td>
+                                            <td>02-03-2025</td>
+                                            <td><span class="badge badge-approved">Approved</span></td>
+                                            <td>
+                                                <div class="actions">
+                                                    <button class="btn btn-primary" onclick="viewStudentOutpassDetails('OP-20250228-006')">View</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>OP-20250215-007</td>
+                                            <td>Home</td>
+                                            <td>Family emergency</td>
+                                            <td>15-02-2025</td>
+                                            <td>20-02-2025</td>
+                                            <td><span class="badge badge-approved">Approved</span></td>
+                                            <td>
+                                                <div class="actions">
+                                                    <button class="btn btn-primary" onclick="viewStudentOutpassDetails('OP-20250215-007')">View</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>OP-20250128-008</td>
+                                            <td>Home</td>
+                                            <td>Weekend visit</td>
+                                            <td>28-01-2025</td>
+                                            <td>29-01-2025</td>
+                                            <td><span class="badge badge-approved">Approved</span></td>
+                                            <td>
+                                                <div class="actions">
+                                                    <button class="btn btn-primary" onclick="viewStudentOutpassDetails('OP-20250128-008')">View</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="pagination">
+                                <a href="#" class="active">1</a>
+                                <a href="#">2</a>
+                                <a href="#">Next</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Student New Request Section -->
+                    <div id="student-new-request" style="display: none;">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Create New Outpass Request</h3>
+                            </div>
+                            <div class="card-body">
+                                <form id="newOutpassForm">
+                                    <div class="form-row">
+                                        <div class="form-col">
+                                            <div class="form-group">
+                                                <label for="destination">Destination</label>
+                                                <input type="text" class="form-control" id="destination" placeholder="Enter destination" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-col">
+                                            <div class="form-group">
+                                                <label for="purpose">Purpose</label>
+                                                <select class="form-control" id="purpose" required>
+                                                    <option value="">Select purpose</option>
+                                                    <option value="home">Home Visit</option>
+                                                    <option value="medical">Medical Emergency/Checkup</option>
+                                                    <option value="family">Family Function</option>
+                                                    <option value="interview">Internship/Job Interview</option>
+                                                    <option value="conference">Conference/Workshop</option>
+                                                    <option value="competition">Competition</option>
+                                                    <option value="other">Other</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group" id="otherPurposeGroup" style="display: none;">
+                                        <label for="otherPurpose">Specify Other Purpose</label>
+                                        <input type="text" class="form-control" id="otherPurpose" placeholder="Specify purpose">
+                                    </div>
+                                    
+                                    <div class="form-row">
+                                        <div class="form-col">
+                                            <div class="form-group">
+                                                <label for="fromDate">From Date</label>
+                                                <input type="date" class="form-control" id="fromDate" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-col">
+                                            <div class="form-group">
+                                                <label for="toDate">To Date</label>
+                                                <input type="date" class="form-control" id="toDate" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-row">
+                                        <div class="form-col">
+                                            <div class="form-group">
+                                                <label for="fromTime">From Time</label>
+                                                <input type="time" class="form-control" id="fromTime" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-col">
+                                            <div class="form-group">
+                                                <label for="toTime">To Time</label>
+                                                <input type="time" class="form-control" id="toTime" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="reason">Detailed Reason</label>
+                                        <textarea class="form-control" id="reason" rows="3" placeholder="Provide detailed explanation" required></textarea>
+                                    </div>
+                                    
+                                    <div class="form-row">
+                                        <div class="form-col">
+                                            <div class="form-group">
+                                                <label for="emergencyContact">Emergency Contact Name</label>
+                                                <input type="text" class="form-control" id="emergencyContact" placeholder="Enter emergency contact name" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-col">
+                                            <div class="form-group">
+                                                <label for="emergencyPhone">Emergency Contact Number</label>
+                                                <input type="tel" class="form-control" id="emergencyPhone" placeholder="Enter emergency contact number" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="address">Address During Outpass</label>
+                                        <textarea class="form-control" id="address" rows="2" placeholder="Enter complete address" required></textarea>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="transportMode">Mode of Transport</label>
+                                        <select class="form-control" id="transportMode" required>
+                                            <option value="">Select transport mode</option>
+                                            <option value="bus">Bus</option>
+                                            <option value="train">Train</option>
+                                            <option value="personal">Personal Vehicle</option>
+                                            <option value="taxi">Taxi/Cab</option>
+                                            <option value="air">Air</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <div class="checkbox">
+                                            <input type="checkbox" id="parentConsent" required>
+                                            <label for="parentConsent">I confirm that my parents are aware of this outpass request</label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <div class="checkbox">
+                                            <input type="checkbox" id="termsConditions" required>
+                                            <label for="termsConditions">I agree to all hostel rules and regulations during my outpass period</label>
+                                        </div>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-primary">Submit Request</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Student Profile Section -->
+                    <div id="student-profile" style="display: none;">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Student Profile</h3>
+                                <button class="btn btn-primary" onclick="editProfile()">Edit Profile</button>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-row">
+                                    <div class="form-col">
+                                        <div style="text-align: center; margin-bottom: 20px;">
+                                            <img src="/api/placeholder/150/150" alt="Profile Picture" style="border-radius: 50%;">
+                                            <h3 style="margin-top: 10px;">John Smith</h3>
+                                            <p>Computer Science & Engineering</p>
+                                            <p><span class="badge badge-approved">Third Year</span></p>
+                                        </div>
+                                    </div>
+                                    <div class="form-col">
+                                        <div style="margin-bottom: 15px;">
+                                            <h4>Personal Information</h4>
+                                            <p><strong>Student ID:</strong> S12345</p>
+                                            <p><strong>Roll Number:</strong> CSE2022005</p>
+                                            <p><strong>Email:</strong> john.smith@student.xyz.edu</p>
+                                            <p><strong>Phone:</strong> +91 9876543210</p>
+                                            <p><strong>Date of Birth:</strong> 15-06-2003</p>
+                                            <p><strong>Blood Group:</strong> B+</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <hr style="margin: 20px 0;">
+                                
+                                <div class="form-row">
+                                    <div class="form-col">
+                                        <div class="form-col">
+                                            <h4>Hostel Information</h4>
+                                            <p><strong>Hostel Name:</strong> Boys Hostel Block A</p>
+                                            <p><strong>Room Number:</strong> 205</p>
+                                            <p><strong>Floor:</strong> 2nd Floor</p>
+                                            <p><strong>Warden:</strong> Mr. Robert Brown</p>
+                                        </div>
+                                        <div class="form-col">
+                                            <h4>Academic Information</h4>
+                                            <p><strong>Department:</strong> Computer Science & Engineering</p>
+                                            <p><strong>Batch:</strong> 2022-2026</p>
+                                            <p><strong>Current Year:</strong> 3rd Year</p>
+                                            <p><strong>Current Semester:</strong> Fall 2024</p>
+                                            <p><strong>Faculty Advisor:</strong> Dr. James Wilson</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <hr style="margin: 20px 0;">
+                                    
+                                    <div>
+                                        <h4>Parent/Guardian Information</h4>
+                                        <div class="form-row">
+                                            <div class="form-col">
+                                                <p><strong>Father's Name:</strong> Michael Smith</p>
+                                                <p><strong>Father's Phone:</strong> +91 9876543211</p>
+                                                <p><strong>Father's Email:</strong> michael.smith@example.com</p>
+                                            </div>
+                                            <div class="form-col">
+                                                <p><strong>Mother's Name:</strong> Susan Smith</p>
+                                                <p><strong>Mother's Phone:</strong> +91 9876543212</p>
+                                                <p><strong>Mother's Email:</strong> susan.smith@example.com</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <hr style="margin: 20px 0;">
+                                    
+                                    <div>
+                                        <h4>Permanent Address</h4>
+                                        <p>123 Main Street, Apartment 4B<br>
+                                        Green Gardens, Mumbai - 400001<br>
+                                        Maharashtra, India</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modals -->
+        
+        <!-- Outpass Details Modal -->
+        <div id="outpassDetailsModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('outpassDetailsModal')">&times;</span>
+                <h2>Outpass Details</h2>
+                <div class="form-row">
+                    <div class="form-col">
+                        <p><strong>Student:</strong> <span id="modalStudentName">John Smith</span></p>
+                        <p><strong>Student ID:</strong> <span id="modalStudentId">S12345</span></p>
+                        <p><strong>Department:</strong> <span id="modalDepartment">Computer Science</span></p>
+                        <p><strong>Year:</strong> <span id="modalYear">Third Year</span></p>
+                    </div>
+                    <div class="form-col">
+                        <p><strong>Outpass ID:</strong> <span id="modalOutpassId">OP-20250424-001</span></p>
+                        <p><strong>Request Date:</strong> <span id="modalRequestDate">23-04-2025</span></p>
+                        <p><strong>Status:</strong> <span id="modalStatus" class="badge badge-pending">Pending</span></p>
+                    </div>
+                </div>
+                
+                <hr style="margin: 20px 0;">
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <p><strong>Destination:</strong> <span id="modalDestination">Home</span></p>
+                        <p><strong>Purpose:</strong> <span id="modalPurpose">Weekend visit</span></p>
+                        <p><strong>Detailed Reason:</strong> <span id="modalReason">Going home for the weekend to attend a family gathering.</span></p>
+                    </div>
+                    <div class="form-col">
+                        <p><strong>From Date:</strong> <span id="modalFromDate">24-04-2025</span></p>
+                        <p><strong>To Date:</strong> <span id="modalToDate">26-04-2025</span></p>
+                        <p><strong>Duration:</strong> <span id="modalDuration">3 days</span></p>
+                    </div>
+                </div>
+                
+                <hr style="margin: 20px 0;">
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <p><strong>Emergency Contact:</strong> <span id="modalEmergencyContact">Michael Smith</span></p>
+                        <p><strong>Emergency Phone:</strong> <span id="modalEmergencyPhone">+91 9876543211</span></p>
+                        <p><strong>Transport Mode:</strong> <span id="modalTransport">Bus</span></p>
+                    </div>
+                    <div class="form-col">
+                        <p><strong>Address During Outpass:</strong> <span id="modalAddress">123 Main Street, Mumbai - 400001, Maharashtra</span></p>
+                    </div>
+                </div>
+                
+                <hr style="margin: 20px 0;">
+                
+                <div id="approvalWorkflowSection">
+                    <h4>Approval Workflow</h4>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Authority</th>
+                                    <th>Name</th>
+                                    <th>Status</th>
+                                    <th>Date & Time</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>HOD</td>
+                                    <td>Dr. James Wilson</td>
+                                    <td><span class="badge badge-approved">Approved</span></td>
+                                    <td>23-04-2025 11:30 AM</td>
+                                    <td>Approved as requested.</td>
+                                </tr>
+                                <tr>
+                                    <td>Director</td>
+                                    <td>Dr. Emily Johnson</td>
+                                    <td><span class="badge badge-approved">Approved</span></td>
+                                    <td>23-04-2025 02:15 PM</td>
+                                    <td>Approved.</td>
+                                </tr>
+                                <tr>
+                                    <td>Warden</td>
+                                    <td>Mr. Robert Brown</td>
+                                    <td><span class="badge badge-pending">Pending</span></td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>Parent Verification</td>
+                                    <td>Michael Smith</td>
+                                    <td><span class="badge badge-approved">Verified</span></td>
+                                    <td>23-04-2025 12:45 PM</td>
+                                    <td>Verified via SMS OTP</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div id="adminActionButtons" class="actions" style="margin-top: 20px;">
+                    <button class="btn btn-success" onclick="approveOutpassFromModal()">Approve</button>
+                    <button class="btn btn-danger" onclick="rejectOutpassFromModal()">Reject</button>
+                    <div style="flex-grow: 1;"></div>
+                    <button class="btn btn-primary" onclick="closeModal('outpassDetailsModal')">Close</button>
+                </div>
+                
+                <div id="studentActionButtons" class="actions" style="margin-top: 20px; display: none;">
+                    <button class="btn btn-primary" onclick="downloadOutpassFromModal()">Download</button>
+                    <button class="btn btn-primary" onclick="closeModal('outpassDetailsModal')">Close</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Add User Modal -->
+        <div id="addUserModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('addUserModal')">&times;</span>
+                <h2>Add New User</h2>
+                <form id="addUserForm">
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="newUserName">Full Name</label>
+                                <input type="text" class="form-control" id="newUserName" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="newUserEmail">Email</label>
+                                <input type="email" class="form-control" id="newUserEmail" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="newUserRole">Role</label>
+                                <select class="form-control" id="newUserRole" required>
+                                    <option value="">Select Role</option>
+                                    <option value="hod">HOD</option>
+                                    <option value="director">Director</option>
+                                    <option value="warden">Warden</option>
+                                    <option value="security">Security</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="newUserDepartment">Department</label>
+                                <input type="text" class="form-control" id="newUserDepartment" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="newUserPhone">Phone</label>
+                                <input type="tel" class="form-control" id="newUserPhone" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="newUserStatus">Status</label>
+                                <select class="form-control" id="newUserStatus" required>
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="newUserUsername">Username</label>
+                                <input type="text" class="form-control" id="newUserUsername" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="newUserPassword">Password</label>
+                                <input type="password" class="form-control" id="newUserPassword" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Add User</button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Parent Verification Modal -->
+        <div id="parentVerificationModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('parentVerificationModal')">&times;</span>
+                <h2>Parent Verification</h2>
+                <p>An OTP has been sent to the registered parent's mobile number ending with XXXX768.</p>
+                <div class="form-group">
+                    <label for="parentOTP">Enter OTP</label>
+                    <input type="text" class="form-control" id="parentOTP" placeholder="Enter 6-digit OTP" required>
+                </div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="verifyParentOTP()">Verify</button>
+                    <button class="btn btn-primary" onclick="resendParentOTP()">Resend OTP</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Toast Notification -->
+        <div id="toast" class="toast" style="display: none;">
+            <span id="toastMessage">Outpass request submitted successfully!</span>
+        </div>
+        
+        <script>
+            // Global variables
+            let currentUser = {
+                type: '',
+                name: '',
+                id: ''
+            };
+            
+            // Event Listeners
+            document.addEventListener('DOMContentLoaded', function() {
+                // Login form submission
+                document.getElementById('loginForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const username = document.getElementById('username').value;
+                    const password = document.getElementById('password').value;
+                    const userType = document.getElementById('userType').value;
+                    
+                    // Simple authentication (for demo purposes)
+                    if (username && password) {
+                        login(username, userType);
+                    }
+                });
+                
+                // New outpass form submission
+                if (document.getElementById('newOutpassForm')) {
+                    document.getElementById('newOutpassForm').addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        submitOutpassRequest();
+                    });
+                }
+                
+                // Purpose dropdown change event
+                if (document.getElementById('purpose')) {
+                    document.getElementById('purpose').addEventListener('change', function() {
+                        const otherPurposeGroup = document.getElementById('otherPurposeGroup');
+                        if (this.value === 'other') {
+                            otherPurposeGroup.style.display = 'block';
+                        } else {
+                            otherPurposeGroup.style.display = 'none';
+                        }
+                    });
+                }
+                
+                // Add user form submission
+                if (document.getElementById('addUserForm')) {
+                    document.getElementById('addUserForm').addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        addNewUser();
+                    });
+                }
+                
+                // Settings form submission
+                if (document.getElementById('settingsForm')) {
+                    document.getElementById('settingsForm').addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        saveSettings();
+                    });
+                }
+                
+                // Initialize charts if on admin dashboard
+                if (document.getElementById('outpassTrendsChart')) {
+                    initializeCharts();
+                }
+            });
+            
+            // Functions
+            function login(username, userType) {
+                currentUser.type = userType;
+                currentUser.name = username;
+                currentUser.id = userType === 'student' ? 'user' : 'user';
+                
+                // Hide login page
+                document.getElementById('login-page').style.display = 'none';
+                
+                // Show appropriate dashboard
+                if (userType === 'admin') {
+                    document.getElementById('admin-dashboard').style.display = 'block';
+                    document.getElementById('admin-name').textContent = username;
+                    showSection('admin-dashboard-section');
+                } else {
+                    document.getElementById('student-dashboard').style.display = 'block';
+                    document.getElementById('student-name').textContent = username;
+                    document.getElementById('student-dashboard-name').textContent = username;
+                    showSection('student-dashboard-section');
+                }
+                
+                // Show success toast
+                showToast('Login successful! Welcome ' + username, 'success');
+            }
+            
+            function logout() {
+                // Reset current user
+                currentUser = {
+                    type: '',
+                    name: '',
+                    id: ''
+                };
+                
+                // Hide dashboards
+                document.getElementById('admin-dashboard').style.display = 'none';
+                document.getElementById('student-dashboard').style.display = 'none';
+                
+                // Show login page
+                document.getElementById('login-page').style.display = 'block';
+                
+                // Reset forms
+                document.getElementById('loginForm').reset();
+            }
+            
+            function showSection(sectionId) {
+                // Hide all sections
+                const sections = document.querySelectorAll('.content > div');
+                sections.forEach(section => {
+                    section.style.display = 'none';
+                });
+                
+                // Show selected section
+                document.getElementById(sectionId).style.display = 'block';
+                
+                // Update active sidebar link
+                const sidebarLinks = document.querySelectorAll('.sidebar-nav a');
+                sidebarLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('onclick').includes(sectionId)) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            function viewOutpassDetails(studentId) {
+                // In a real app, you would fetch details from the server
+                document.getElementById('modalStudentId').textContent = studentId;
+                
+                // Show appropriate action buttons
+                document.getElementById('adminActionButtons').style.display = 'flex';
+                document.getElementById('studentActionButtons').style.display = 'none';
+                
+                // Show modal
+                document.getElementById('outpassDetailsModal').style.display = 'block';
+            }
+            
+            function viewStudentOutpassDetails(outpassId) {
+                // In a real app, you would fetch details from the server
+                document.getElementById('modalOutpassId').textContent = outpassId;
+                
+                // Show appropriate action buttons
+                document.getElementById('adminActionButtons').style.display = 'none';
+                document.getElementById('studentActionButtons').style.display = 'flex';
+                
+                // Show modal
+                document.getElementById('outpassDetailsModal').style.display = 'block';
+            }
+            
+            function closeModal(modalId) {
+                document.getElementById(modalId).style.display = 'none';
+            }
+            
+            function approveOutpass(studentId) {
+                // In a real app, you would send an API request
+                showToast('Outpass for student ' + studentId + ' approved successfully!', 'success');
+            }
+            
+            function rejectOutpass(studentId) {
+                // In a real app, you would send an API request
+                showToast('Outpass for student ' + studentId + ' rejected!', 'error');
+            }
+            
+            function approveOutpassFromModal() {
+                const studentId = document.getElementById('modalStudentId').textContent;
+                approveOutpass(studentId);
+                closeModal('outpassDetailsModal');
+            }
+            
+            function rejectOutpassFromModal() {
+                const studentId = document.getElementById('modalStudentId').textContent;
+                rejectOutpass(studentId);
+                closeModal('outpassDetailsModal');
+            }
+            
+            function downloadOutpass() {
+                showToast('Outpass downloaded successfully!', 'success');
+            }
+            
+            function downloadOutpassFromModal() {
+                downloadOutpass();
+                closeModal('outpassDetailsModal');
+            }
+            
+            function submitOutpassRequest() {
+                // In a real app, you would send an API request
+                // For demo, show parent verification modal
+                document.getElementById('parentVerificationModal').style.display = 'block';
+            }
+            
+            function verifyParentOTP() {
+                // In a real app, you would verify the OTP
+                closeModal('parentVerificationModal');
+                showToast('Outpass request submitted successfully!', 'success');
+                
+                // Reset form
+                document.getElementById('newOutpassForm').reset();
+                
+                // Redirect to my requests
+                showSection('student-my-requests');
+            }
+            
+            function resendParentOTP() {
+                showToast('OTP resent to parent\'s mobile number!', 'success');
+            }
+            
+            function editProfile() {
+                showToast('Profile editing is not available in this demo version.', 'warning');
+            }
+            
+            function showAddUserModal() {
+                document.getElementById('addUserModal').style.display = 'block';
+            }
+            
+            function addNewUser() {
+                // In a real app, you would send an API request
+                closeModal('addUserModal');
+                showToast('New user added successfully!', 'success');
+                
+                // Reset form
+                document.getElementById('addUserForm').reset();
+            }
+            
+            function saveSettings() {
+                // In a real app, you would send an API request
+                showToast('Settings saved successfully!', 'success');
+            }
+            
+            function showToast(message, type = 'success') {
+                const toast = document.getElementById('toast');
+                const toastMessage = document.getElementById('toastMessage');
+                
+                // Set message and type
+                toastMessage.textContent = message;
+                toast.className = 'toast';
+                toast.classList.add(type);
+                
+                // Show toast
+                toast.style.display = 'block';
+                
+                // Hide after 3 seconds
+                setTimeout(function() {
+                    toast.style.display = 'none';
+                }, 3000);
+            }
+            
+            function initializeCharts() {
+                // Outpass Trends Chart
+                const trendsCtx = document.getElementById('outpassTrendsChart').getContext('2d');
+                const trendsChart = new Chart(trendsCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                        datasets: [{
+                            label: 'Outpass Requests',
+                            data: [65, 59, 80, 81, 56, 55, 40, 88, 76, 90, 85, 157],
+                            borderColor: '#3498db',
+                            backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Monthly Outpass Requests Trend (2025)'
+                            }
+                        }
+                    }
+                });
+                
+                // Monthly Requests Chart
+                if (document.getElementById('monthlyRequestsChart')) {
+                    const monthlyCtx = document.getElementById('monthlyRequestsChart').getContext('2d');
+                    const monthlyChart = new Chart(monthlyCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                            datasets: [{
+                                label: 'Approved',
+                                data: [55, 49, 70, 71, 46, 45, 30, 78, 66, 80, 75, 112],
+                                backgroundColor: '#2ecc71'
+                            }, {
+                                label: 'Rejected',
+                                data: [5, 7, 6, 8, 5, 7, 4, 6, 5, 6, 7, 17],
+                                backgroundColor: '#e74c3c'
+                            }, {
+                                label: 'Pending',
+                                data: [5, 3, 4, 2, 5, 3, 6, 4, 5, 4, 3, 28],
+                                backgroundColor: '#f39c12'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                x: {
+                                    stacked: true,
+                                },
+                                y: {
+                                    stacked: true
+                                }
+                            },
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Monthly Outpass Request Status (2025)'
+                                }
+                            }
+                        }
+                    });
+                }
+                
+                // Purpose Distribution Chart
+                if (document.getElementById('purposeDistributionChart')) {
+                    const purposeCtx = document.getElementById('purposeDistributionChart').getContext('2d');
+                    const purposeChart = new Chart(purposeCtx, {
+                        type: 'pie',
+                        data: {
+                            labels: ['Home Visit', 'Medical', 'Family Function', 'Interview', 'Conference', 'Other'],
+                            datasets: [{
+                                data: [42, 15, 12, 10, 8, 13],
+                                backgroundColor: [
+                                    '#3498db',
+                                    '#2ecc71',
+                                    '#f39c12',
+                                    '#9b59b6',
+                                    '#1abc9c',
+                                    '#e74c3c'
+                                ]
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Outpass Purpose Distribution'
+                                }
+                            }
+                        }
+                    });
+                }
+                
+                // Approval Status Chart
+                if (document.getElementById('approvalStatusChart')) {
+                    const statusCtx = document.getElementById('approvalStatusChart').getContext('2d');
+                    const statusChart = new Chart(statusCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Approved', 'Rejected', 'Pending'],
+                            datasets: [{
+                                data: [112, 17, 28],
+                                backgroundColor: [
+                                    '#2ecc71',
+                                    '#e74c3c',
+                                    '#f39c12'
+                                ]
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Current Approval Status'
+                                }
+                            }
+                        }
+                    });
+                }
+                
+                // Duration Analysis Chart
+                if (document.getElementById('durationAnalysisChart')) {
+                    const durationCtx = document.getElementById('durationAnalysisChart').getContext('2d');
+                    const durationChart = new Chart(durationCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['1 Day', '2 Days', '3 Days', '4 Days', '5 Days', '6+ Days'],
+                            datasets: [{
+                                label: 'Number of Requests',
+                                data: [56, 42, 28, 16, 10, 5],
+                                backgroundColor: '#3498db'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Outpass Duration Analysis'
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        </script>
+    </body>
+    </html>
